@@ -1,13 +1,66 @@
 ---
 import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
 import AnnouncementBar from '../components/AnnouncementBar.astro';
 import CartPopup from '../components/cart/CartPopup.astro';
 import VariantsPopup from '../components/cart/VariantsPopup.astro';
 import LivePreviewManager from '../components/LivePreviewManager.astro';
-import { shopStyleService } from '../services/ShopStyleService';
 import '../assets/css/card-styles.css';
 import '../assets/css/button-styles.css';
+
+// Define ShopStyleConfig interface locally since we removed the service
+interface ShopStyleConfig {
+  id?: string;
+  templateId: string;
+  settings: {
+    colors: {
+      primary: string;
+      secondary: string;
+      neutral: string;
+      semantic: string;
+      background?: string;
+      surface?: string;
+      text?: string;
+      textSecondary?: string;
+    };
+    fonts: {
+      heading: string;
+      body: string;
+    };
+    styles: {
+      button: {
+        primary: {
+          background: string;
+          text: string;
+          hoverEffect: string;
+        };
+        secondary: {
+          background: string;
+          text: string;
+          hoverEffect: string;
+        };
+      };
+      card: {
+        default: {
+          background: string;
+          borderColor: string;
+          borderRadius: string;
+          hoverEffect: string;
+        };
+      };
+    };
+  };
+  pageInterface: {
+    layout: string;
+    announcementBarSettings?: {
+      visible: boolean;
+      content: string;
+      textColor: string;
+      backgroundColor: string;
+      showOnHomepageOnly: boolean;
+    };
+  };
+  isPublished?: boolean;
+}
 
 export interface Props {
   title: string;
@@ -20,39 +73,73 @@ const { title, description = "BigS - Nền tảng thương mại điện tử h�
 // Check if we're in live preview mode
 const url = new URL(Astro.request.url);
 const isLivePreview = url.searchParams.has('preview') || url.searchParams.has('edit');
+// console.log('🔍 Server-side live preview check:', { 
+//   url: url.toString(), 
+//   hasPreview: url.searchParams.has('preview'),
+//   hasEdit: url.searchParams.has('edit'),
+//   isLivePreview 
+// });
 
-// Load shop style config from service
-let shopStyleConfig: any = null;
+// Load shop style config (placeholder for now since we removed the service)
+let shopStyleConfig: ShopStyleConfig | null = null;
 // Extract shop ID from subdomain (e.g., shop1.localhost:4321 -> shop1)
 const host = Astro.request.headers.get('host') || '';
 const shopId = host.split('.')[0];
 
-try {
-  if (!shopId || shopId === 'localhost' || shopId === '127') {
-    console.warn('No valid shop ID found in subdomain, skipping shop style config');
-  } else {
-    // Use ShopStyleService to load config
-    shopStyleConfig = await shopStyleService.getShopStyleConfig(shopId);
-  }
-} catch (error) {
-  console.warn('Failed to load shop style config:', error);
-  // Fallback to default config
+// For now, use default config since we removed the service
+if (shopId && shopId !== 'localhost' && shopId !== '127') {
   shopStyleConfig = {
+    id: 'default',
+    templateId: 'default',
     settings: {
+      colors: {
+        primary: '#3b82f6',
+        secondary: '#6b7280',
+        neutral: '#9ca3af',
+        semantic: '#f59e0b',
+        background: '#ffffff',
+        surface: '#f9fafb',
+        text: '#111827',
+        textSecondary: '#6b7280'
+      },
       fonts: {
         heading: 'Inter',
         body: 'Inter'
+      },
+      styles: {
+        button: {
+          primary: {
+            background: '#3b82f6',
+            text: '#ffffff',
+            hoverEffect: 'scale'
+          },
+          secondary: {
+            background: '#6b7280',
+            text: '#ffffff',
+            hoverEffect: 'scale'
+          }
+        },
+        card: {
+          default: {
+            background: '#ffffff',
+            borderColor: '#e5e7eb',
+            borderRadius: '0.5rem',
+            hoverEffect: 'scale'
+          }
+        }
       }
     },
     pageInterface: {
+      layout: 'default',
       announcementBarSettings: {
         visible: true,
-        content: '🎉 Modern Theme v2.0 - Sidebar Navigation Layout!',
+        content: 'Chào mừng đến với BigS!',
         textColor: '#ffffff',
-        backgroundColor: '#667eea',
+        backgroundColor: '#000000',
         showOnHomepageOnly: false
       }
-    }
+    },
+    isPublished: true
   };
 }
 ---
@@ -71,10 +158,10 @@ try {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- SweetAlert2 for notifications -->
+   
     <link rel="stylesheet" href="https://unpkg.com/sweetalert2@11/dist/sweetalert2.min.css">
     
-    <!-- Notification system -->
-    <script src="/src/utils/notify.js"></script>
+    <!-- Notification system will be handled by core -->
     
     <title>{title}</title>
     
@@ -89,178 +176,37 @@ try {
         />
       </>
     )}
-
-    <style>
-      /* Modern Sidebar Layout Styles */
-      .modern-layout {
-        display: flex;
-        min-height: 100vh;
-      }
-      
-      .sidebar {
-        width: 280px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 20px;
-        position: fixed;
-        height: 100vh;
-        overflow-y: auto;
-        z-index: 1000;
-      }
-      
-      .sidebar-header {
-        text-align: center;
-        padding: 20px 0;
-        border-bottom: 1px solid rgba(255,255,255,0.2);
-        margin-bottom: 30px;
-      }
-      
-      .sidebar-logo {
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 10px;
-      }
-      
-      .sidebar-nav {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-      
-      .sidebar-nav li {
-        margin-bottom: 10px;
-      }
-      
-      .sidebar-nav a {
-        display: block;
-        padding: 12px 16px;
-        color: white;
-        text-decoration: none;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-      }
-      
-      .sidebar-nav a:hover {
-        background: rgba(255,255,255,0.1);
-        transform: translateX(5px);
-      }
-      
-      .sidebar-nav a.active {
-        background: rgba(255,255,255,0.2);
-        font-weight: 600;
-      }
-      
-      .main-content {
-        flex: 1;
-        margin-left: 280px;
-        background: #f8fafc;
-      }
-      
-      .top-bar {
-        background: white;
-        padding: 15px 30px;
-        border-bottom: 1px solid #e2e8f0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      
-      .content-area {
-        padding: 30px;
-        min-height: calc(100vh - 80px);
-      }
-      
-      .mobile-menu-toggle {
-        display: none;
-        background: none;
-        border: none;
-        color: white;
-        font-size: 24px;
-        cursor: pointer;
-      }
-      
-      @media (max-width: 768px) {
-        .sidebar {
-          transform: translateX(-100%);
-          transition: transform 0.3s ease;
-        }
-        
-        .sidebar.open {
-          transform: translateX(0);
-        }
-        
-        .main-content {
-          margin-left: 0;
-        }
-        
-        .mobile-menu-toggle {
-          display: block;
-        }
-      }
-    </style>
   </head>
   <body>
-    <div id="app" class="modern-layout">
-      <!-- Sidebar Navigation -->
-      <aside class="sidebar" id="sidebar">
-        <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰</button>
-        
-        <div class="sidebar-header">
-          <div class="sidebar-logo">BigS Store</div>
-          <div style="font-size: 14px; opacity: 0.8;">Modern Theme v2.0</div>
-        </div>
-        
-        <nav>
-          <ul class="sidebar-nav">
-            <li><a href="/" class={currentPage === 'home' ? 'active' : ''}>🏠 Trang chủ</a></li>
-            <li><a href="/san-pham" class={currentPage === 'products' ? 'active' : ''}>📦 Sản phẩm</a></li>
-            <li><a href="/danh-muc" class={currentPage === 'categories' ? 'active' : ''}>📂 Danh mục</a></li>
-            <li><a href="/gio-hang" class={currentPage === 'cart' ? 'active' : ''}>🛒 Giỏ hàng</a></li>
-            <li><a href="/lien-he" class={currentPage === 'contact' ? 'active' : ''}>📞 Liên hệ</a></li>
-            <li><a href="/ve-chung-toi" class={currentPage === 'about' ? 'active' : ''}>ℹ️ Về chúng tôi</a></li>
-          </ul>
-        </nav>
-        
-        <div style="margin-top: 50px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 12px;">
-          <h4 style="margin: 0 0 15px 0; font-size: 16px;">🎨 Theme Info</h4>
-          <p style="margin: 0; font-size: 12px; opacity: 0.8;">
-            Modern Theme với sidebar navigation<br/>
-            Responsive design<br/>
-            Live preview support
-          </p>
-        </div>
-      </aside>
-
-      <!-- Main Content Area -->
-      <div class="main-content">
-        <!-- Top Bar -->
-        <div class="top-bar">
-          <div>
-            <h1 style="margin: 0; font-size: 24px; color: #1a202c;">{title}</h1>
-          </div>
-          <div style="display: flex; gap: 15px; align-items: center;">
-            <button class="btn-secondary" style="padding: 8px 16px;">🔍 Tìm kiếm</button>
-            <button class="btn-primary" style="padding: 8px 16px;">🛒 Giỏ hàng (0)</button>
-          </div>
-        </div>
-
-        <!-- Content Area -->
-        <div class="content-area">
-          <AnnouncementBar 
-            visible={shopStyleConfig?.pageInterface?.announcementBarSettings?.visible ?? true}
-            content={shopStyleConfig?.pageInterface?.announcementBarSettings?.content ?? ''}
-            textColor={shopStyleConfig?.pageInterface?.announcementBarSettings?.textColor ?? '#ffffff'}
-            backgroundColor={shopStyleConfig?.pageInterface?.announcementBarSettings?.backgroundColor ?? '#000000'}
-            showOnHomepageOnly={shopStyleConfig?.pageInterface?.announcementBarSettings?.showOnHomepageOnly ?? false}
-            currentPage={currentPage}
-          />
-          
-          <main>
-            <slot />
-          </main>
-        </div>
+    <div id="app">
+      <div style="background: #f0f0f0; padding: 10px; margin: 10px; border: 1px solid #ccc; font-family: monospace; font-size: 12px;">
+        <strong>🔍 Debug Info:</strong><br/>
+        <strong>Server-side:</strong><br/>
+        isLivePreview: {isLivePreview}<br/>
+        URL: {url.toString()}<br/>
+        Search: {url.search}<br/>
+        Has Preview: {url.searchParams.has('preview')}<br/>
+        Has Edit: {url.searchParams.has('edit')}<br/>
+        Preview Value: {url.searchParams.get('preview')}<br/>
+        Edit Value: {url.searchParams.get('edit')}<br/>
+        Host: {Astro.request.headers.get('host')}<br/>
+        ShopId: {host.split('.')[0]}<br/>
+        <br/>
+        <strong>Client-side:</strong><br/>
+        <span id="client-debug-info">Loading...</span>
       </div>
-
+      <AnnouncementBar 
+        visible={shopStyleConfig?.pageInterface?.announcementBarSettings?.visible ?? true}
+        content={shopStyleConfig?.pageInterface?.announcementBarSettings?.content ?? ''}
+        textColor={shopStyleConfig?.pageInterface?.announcementBarSettings?.textColor ?? '#ffffff'}
+        backgroundColor={shopStyleConfig?.pageInterface?.announcementBarSettings?.backgroundColor ?? '#000000'}
+        showOnHomepageOnly={shopStyleConfig?.pageInterface?.announcementBarSettings?.showOnHomepageOnly ?? false}
+        currentPage={currentPage}
+      />
+      <Header />
+      <main>
+        <slot />
+      </main>
       <CartPopup />
       <VariantsPopup />
     </div>
@@ -272,98 +218,261 @@ try {
       if (typeof window !== 'undefined') {
         window.app = window.app || {};
         
-        // Mobile menu toggle
-        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-        const sidebar = document.getElementById('sidebar');
+        // Update client debug info
+        const updateClientDebug = () => {
+          const clientDebugElement = document.getElementById('client-debug-info');
+          if (clientDebugElement) {
+            clientDebugElement.innerHTML = `
+              URL: ${window.location.href}<br/>
+              Search: ${window.location.search}<br/>
+              Has Preview: ${window.location.search.includes('preview')}<br/>
+              Has Edit: ${window.location.search.includes('edit')}<br/>
+              Is Live Preview: ${window.location.search.includes('preview=true') || window.location.search.includes('edit=true')}<br/>
+              <br/>
+              <strong>PostMessage State:</strong><br/>
+              Edit Mode: ${window.isEditMode || false}<br/>
+              Last Message: ${window.lastMessageType || 'None'}<br/>
+              Message Count: ${window.messageCount || 0}
+            `;
+          }
+        };
         
-        if (mobileMenuToggle && sidebar) {
-          mobileMenuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
+        // Update debug info immediately
+        updateClientDebug();
+        
+        // Update debug info every 2 seconds
+        setInterval(updateClientDebug, 2000);
+      }
+
+      // Apply initial style config from server
+      if (shopStyleConfig) {
+        const { colors, fonts, styles, layout } = shopStyleConfig;
+        
+        // Function to apply dynamic hover effects
+        function applyDynamicHoverEffects() {
+          // Apply button hover effects
+          const primaryHoverEffect = getComputedStyle(document.documentElement).getPropertyValue('--button-primary-hover-effect').trim();
+          const secondaryHoverEffect = getComputedStyle(document.documentElement).getPropertyValue('--button-secondary-hover-effect').trim();
+          const cardHoverEffect = getComputedStyle(document.documentElement).getPropertyValue('--card-hover-effect').trim();
+          
+          // Add event listeners for dynamic hover effects
+          document.addEventListener('DOMContentLoaded', () => {
+            // Primary button hover effects
+            document.querySelectorAll('.btn-primary').forEach(btn => {
+              btn.addEventListener('mouseenter', () => {
+                if (primaryHoverEffect === 'scale') {
+                  btn.style.transform = 'scale(1.05)';
+                } else if (primaryHoverEffect === 'invert') {
+                  btn.style.filter = 'invert(1)';
+                } else if (primaryHoverEffect === 'darken') {
+                  btn.style.filter = 'brightness(0.8)';
+                }
+              });
+              
+              btn.addEventListener('mouseleave', () => {
+                btn.style.transform = '';
+                btn.style.filter = '';
+              });
+            });
+            
+            // Secondary button hover effects
+            document.querySelectorAll('.btn-secondary').forEach(btn => {
+              btn.addEventListener('mouseenter', () => {
+                if (secondaryHoverEffect === 'scale') {
+                  btn.style.transform = 'scale(1.05)';
+                } else if (secondaryHoverEffect === 'invert') {
+                  btn.style.filter = 'invert(1)';
+                } else if (secondaryHoverEffect === 'darken') {
+                  btn.style.filter = 'brightness(0.8)';
+                }
+              });
+              
+              btn.addEventListener('mouseleave', () => {
+                btn.style.transform = '';
+                btn.style.filter = '';
+              });
+            });
+            
+            // Card hover effects
+            document.querySelectorAll('.card').forEach(card => {
+              card.addEventListener('mouseenter', () => {
+                if (cardHoverEffect === 'scale') {
+                  card.style.transform = 'scale(1.02)';
+                } else if (cardHoverEffect === 'glow') {
+                  card.style.boxShadow = '0 0 20px rgba(59, 130, 246, 0.3)';
+                } else if (cardHoverEffect === 'border') {
+                  card.style.borderColor = '#3b82f6';
+                }
+              });
+              
+              card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+                card.style.boxShadow = '';
+                card.style.borderColor = '';
+              });
+            });
           });
         }
         
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', (e) => {
-          if (window.innerWidth <= 768) {
-            if (!sidebar?.contains(e.target) && !mobileMenuToggle?.contains(e.target)) {
-              sidebar?.classList.remove('open');
-            }
-          }
-        });
-
-        // Apply initial style config from server
-        if (shopStyleConfig) {
-          const { colors, fonts, styles, layout } = shopStyleConfig;
-          
-          // Function to apply dynamic hover effects
-          function applyDynamicHoverEffects() {
-            // Apply button hover effects
-            const primaryHoverEffect = getComputedStyle(document.documentElement).getPropertyValue('--button-primary-hover-effect').trim();
-            const secondaryHoverEffect = getComputedStyle(document.documentElement).getPropertyValue('--button-secondary-hover-effect').trim();
-            const cardHoverEffect = getComputedStyle(document.documentElement).getPropertyValue('--card-hover-effect').trim();
-            
-            // Add event listeners for dynamic hover effects
-            document.addEventListener('DOMContentLoaded', () => {
-              // Primary button hover effects
-              document.querySelectorAll('.btn-primary').forEach(btn => {
-                btn.addEventListener('mouseenter', () => {
-                  if (primaryHoverEffect === 'scale') {
-                    btn.style.transform = 'scale(1.05)';
-                  } else if (primaryHoverEffect === 'invert') {
-                    btn.style.filter = 'invert(1)';
-                  } else if (primaryHoverEffect === 'darken') {
-                    btn.style.filter = 'brightness(0.8)';
-                  }
-                });
-                
-                btn.addEventListener('mouseleave', () => {
-                  btn.style.transform = '';
-                  btn.style.filter = '';
-                });
-              });
-              
-              // Secondary button hover effects
-              document.querySelectorAll('.btn-secondary').forEach(btn => {
-                btn.addEventListener('mouseenter', () => {
-                  if (secondaryHoverEffect === 'scale') {
-                    btn.style.transform = 'scale(1.05)';
-                  } else if (secondaryHoverEffect === 'invert') {
-                    btn.style.filter = 'invert(1)';
-                  } else if (secondaryHoverEffect === 'darken') {
-                    btn.style.filter = 'brightness(0.8)';
-                  }
-                });
-                
-                btn.addEventListener('mouseleave', () => {
-                  btn.style.transform = '';
-                  btn.style.filter = '';
-                });
-              });
-              
-              // Card hover effects
-              document.querySelectorAll('.card').forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                  if (cardHoverEffect === 'scale') {
-                    card.style.transform = 'scale(1.02)';
-                  } else if (cardHoverEffect === 'shadow') {
-                    card.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
-                  } else if (cardHoverEffect === 'glow') {
-                    card.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.3)';
-                  }
-                });
-                
-                card.addEventListener('mouseleave', () => {
-                  card.style.transform = '';
-                  card.style.boxShadow = '';
-                });
-              });
-            });
-          }
-          
-          // Apply hover effects
-          applyDynamicHoverEffects();
+        // Update CSS variables for colors
+        if (colors) {
+          document.documentElement.style.setProperty('--color-primary', colors.primary || '#3b82f6');
+          document.documentElement.style.setProperty('--color-secondary', colors.secondary || '#6b7280');
+          document.documentElement.style.setProperty('--color-neutral', colors.neutral || '#9ca3af');
+          document.documentElement.style.setProperty('--color-semantic', colors.semantic || '#f59e0b');
+          document.documentElement.style.setProperty('--color-background', colors.background || '#ffffff');
+          document.documentElement.style.setProperty('--color-surface', colors.surface || '#f9fafb');
+          document.documentElement.style.setProperty('--color-text', colors.text || '#111827');
+          document.documentElement.style.setProperty('--color-text-secondary', colors.textSecondary || '#6b7280');
         }
+        
+        // Update CSS variables for fonts
+        if (fonts) {
+          document.documentElement.style.setProperty('--font-heading', fonts.heading || 'Inter');
+          document.documentElement.style.setProperty('--font-body', fonts.body || 'Inter');
+        }
+        
+        // Update CSS variables for button styles
+        if (styles?.button) {
+          document.documentElement.style.setProperty('--button-primary-background', styles.button.primary?.background || '#3b82f6');
+          document.documentElement.style.setProperty('--button-primary-text', styles.button.primary?.text || '#ffffff');
+          document.documentElement.style.setProperty('--button-secondary-background', styles.button.secondary?.background || '#6b7280');
+          document.documentElement.style.setProperty('--button-secondary-text', styles.button.secondary?.text || '#ffffff');
+        }
+        
+        // Update CSS variables for card styles
+        if (styles?.card?.default) {
+          document.documentElement.style.setProperty('--card-background', styles.card.default.background || '#ffffff');
+          document.documentElement.style.setProperty('--card-border-color', styles.card.default.borderColor || '#e5e7eb');
+          document.documentElement.style.setProperty('--card-border-radius', styles.card.default.borderRadius || '0.5rem');
+        }
+        
+        // Update CSS variables for form field styles
+        if (styles?.formField?.input) {
+          document.documentElement.style.setProperty('--input-background', styles.formField.input.background || '#ffffff');
+          document.documentElement.style.setProperty('--input-border-color', styles.formField.input.borderColor || '#d1d5db');
+          document.documentElement.style.setProperty('--input-border-radius', styles.formField.input.borderRadius || '0.375rem');
+        }
+        
+        // Update layout style
+        if (layout) {
+          document.documentElement.style.setProperty('--layout-style', layout);
+        }
+        
+        // Apply dynamic hover effects
+        applyDynamicHoverEffects();
       }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.22.2/sweetalert2.min.js" integrity="sha512-2bCb2rCmddSPBLbYUoGR9R+gmLU/kaoYiTM4OVG3Jz+6E26MTzdozuEYt5j3X60ueQ9x6Xufz7y3jhmrHiHLZg==" crossorigin="anonymous"></script>
   </body>
 </html>
+
+<style is:global>
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: var(--font-body), 'Inter', system-ui, sans-serif;
+  }
+  
+  /* Smooth transitions for hover effects */
+  a, button {
+    transition: all 0.2s ease-in-out;
+  }
+
+  /* CSS Variables for dynamic styling */
+  :root {
+    --color-primary: #FF6B6B;
+    --color-secondary: #4ECDC4;
+    --color-neutral: #45B7D1;
+    --color-semantic: #96CEB4;
+    --font-heading: 'Inter';
+    --font-body: 'Inter';
+    --button-primary-background: #1e90ff;
+    --button-primary-text: #ffffff;
+    --button-primary-border: 1px solid #1e90ff;
+    --button-primary-border-radius: 8px;
+    --button-primary-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    --button-primary-padding: 12px 24px;
+    --button-primary-font-size: 16px;
+    --button-primary-hover-background: #1c86ee;
+    --button-primary-hover-text: #ffffff;
+    --button-primary-hover-effect: scale;
+    --button-secondary-background: #f0f0f0;
+    --button-secondary-text: #333333;
+    --button-secondary-border: 1px solid #cccccc;
+    --button-secondary-border-radius: 6px;
+    --button-secondary-shadow: none;
+    --button-secondary-padding: 10px 20px;
+    --button-secondary-font-size: 14px;
+    --button-secondary-hover-background: #e0e0e0;
+    --button-secondary-hover-text: #000000;
+    --button-secondary-hover-effect: darken;
+    --card-background: #ffffff;
+    --card-border: 1px solid #eeeeee;
+    --card-border-radius: 12px;
+    --card-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    --card-hover-effect: lift;
+    --input-background: #ffffff;
+    --input-text: #333333;
+    --input-border: 1px solid #dddddd;
+    --input-border-radius: 6px;
+    --input-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+    --input-hover-effect: focusRing;
+    --layout-style: 'layoutA';
+  }
+
+  /* Apply fonts to elements */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading), 'Inter', system-ui, sans-serif;
+  }
+  
+  .font-heading { font-family: var(--font-heading), 'Inter', system-ui, sans-serif; }
+  .font-body { font-family: var(--font-body), 'Inter', system-ui, sans-serif; }
+
+  /* Utility classes for colors */
+  .bg-primary { background-color: var(--color-primary); }
+  .bg-secondary { background-color: var(--color-secondary); }
+  .bg-neutral { background-color: var(--color-neutral); }
+  .bg-semantic { background-color: var(--color-semantic); }
+  
+  .text-primary { color: var(--color-primary); }
+  .text-secondary { color: var(--color-secondary); }
+  .text-neutral { color: var(--color-neutral); }
+  .text-semantic { color: var(--color-semantic); }
+  
+  .border-primary { border-color: var(--color-primary); }
+  .border-secondary { border-color: var(--color-secondary); }
+  .border-neutral { border-color: var(--color-neutral); }
+  .border-semantic { border-color: var(--color-semantic); }
+
+  /* Button style utility classes - removed duplicate, using button-styles.css instead */
+
+  /* Card style utility classes */
+  .card {
+    background-color: var(--card-background);
+    border-radius: var(--card-border-radius);
+    border: var(--card-border);
+    box-shadow: var(--card-shadow);
+    padding: 1rem;
+    transition: all 0.2s ease-in-out;
+  }
+
+  /* Form field utility classes */
+  .form-input {
+    background-color: var(--input-background);
+    color: var(--input-text);
+    border: var(--input-border);
+    border-radius: var(--input-border-radius);
+    box-shadow: var(--input-shadow);
+    padding: 0.5rem 0.75rem;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+</style>

@@ -1,0 +1,124 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+---
+
+<Layout title="Test Button Styles">
+  <div class="max-w-4xl mx-auto p-8">
+    <h1 class="text-3xl font-bold mb-8">Test Button Styles</h1>
+    
+    <div class="space-y-8">
+      <!-- Primary Buttons -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Primary Buttons</h2>
+        <div class="flex flex-wrap gap-4">
+          <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Small Primary</button>
+          <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Medium Primary</button>
+          <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Large Primary</button>
+          <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Disabled Primary</button>
+          <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Loading Primary</button>
+        </div>
+      </section>
+
+      <!-- Secondary Buttons -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Secondary Buttons</h2>
+        <div class="flex flex-wrap gap-4">
+          <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Small Secondary</button>
+          <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Medium Secondary</button>
+          <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Large Secondary</button>
+          <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Disabled Secondary</button>
+        </div>
+      </section>
+
+      <!-- Outline Buttons -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Outline Buttons</h2>
+        <div class="flex flex-wrap gap-4">
+          <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Small Outline</button>
+          <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Medium Outline</button>
+          <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Large Outline</button>
+        </div>
+      </section>
+
+      <!-- Ghost Buttons -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Ghost Buttons</h2>
+        <div class="flex flex-wrap gap-4">
+          <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Small Ghost</button>
+          <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Medium Ghost</button>
+          <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Large Ghost</button>
+        </div>
+      </section>
+
+      <!-- Full Width Buttons -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Full Width Buttons</h2>
+        <div class="space-y-4">
+          <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Full Width Primary</button>
+          <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors">Full Width Secondary</button>
+        </div>
+      </section>
+
+      <!-- CSS Variables Display -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Current CSS Variables</h2>
+        <div class="bg-gray-100 p-4 rounded-lg">
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <strong>Primary Button:</strong>
+              <div>Background: <span id="primary-bg">Loading...</span></div>
+              <div>Text: <span id="primary-text">Loading...</span></div>
+              <div>Border: <span id="primary-border">Loading...</span></div>
+              <div>Border Radius: <span id="primary-radius">Loading...</span></div>
+              <div>Shadow: <span id="primary-shadow">Loading...</span></div>
+              <div>Padding: <span id="primary-padding">Loading...</span></div>
+              <div>Font Size: <span id="primary-font-size">Loading...</span></div>
+            </div>
+            <div>
+              <strong>Secondary Button:</strong>
+              <div>Background: <span id="secondary-bg">Loading...</span></div>
+              <div>Text: <span id="secondary-text">Loading...</span></div>
+              <div>Border: <span id="secondary-border">Loading...</span></div>
+              <div>Border Radius: <span id="secondary-radius">Loading...</span></div>
+              <div>Shadow: <span id="secondary-shadow">Loading...</span></div>
+              <div>Padding: <span id="secondary-padding">Loading...</span></div>
+              <div>Font Size: <span id="secondary-font-size">Loading...</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // Display current CSS variables
+  function updateCSSVariablesDisplay() {
+    const root = document.documentElement;
+    
+    // Primary button variables
+    document.getElementById('primary-bg').textContent = getComputedStyle(root).getPropertyValue('--button-primary-background');
+    document.getElementById('primary-text').textContent = getComputedStyle(root).getPropertyValue('--button-primary-text');
+    document.getElementById('primary-border').textContent = getComputedStyle(root).getPropertyValue('--button-primary-border');
+    document.getElementById('primary-radius').textContent = getComputedStyle(root).getPropertyValue('--button-primary-border-radius');
+    document.getElementById('primary-shadow').textContent = getComputedStyle(root).getPropertyValue('--button-primary-shadow');
+    document.getElementById('primary-padding').textContent = getComputedStyle(root).getPropertyValue('--button-primary-padding');
+    document.getElementById('primary-font-size').textContent = getComputedStyle(root).getPropertyValue('--button-primary-font-size');
+    
+    // Secondary button variables
+    document.getElementById('secondary-bg').textContent = getComputedStyle(root).getPropertyValue('--button-secondary-background');
+    document.getElementById('secondary-text').textContent = getComputedStyle(root).getPropertyValue('--button-secondary-text');
+    document.getElementById('secondary-border').textContent = getComputedStyle(root).getPropertyValue('--button-secondary-border');
+    document.getElementById('secondary-radius').textContent = getComputedStyle(root).getPropertyValue('--button-secondary-border-radius');
+    document.getElementById('secondary-shadow').textContent = getComputedStyle(root).getPropertyValue('--button-secondary-shadow');
+    document.getElementById('secondary-padding').textContent = getComputedStyle(root).getPropertyValue('--button-secondary-padding');
+    document.getElementById('secondary-font-size').textContent = getComputedStyle(root).getPropertyValue('--button-secondary-font-size');
+  }
+
+  // Update display when page loads
+  document.addEventListener('DOMContentLoaded', updateCSSVariablesDisplay);
+  
+  // Update display every 2 seconds to catch live preview changes
+  setInterval(updateCSSVariablesDisplay, 2000);
+</script> 
