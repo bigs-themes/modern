@@ -1,8 +1,104 @@
 ---
-import Render from '../render.astro';
-import Welcome from '../components/Welcome.astro';
+import Layout from '../layouts/Layout.astro';
+import HeroSection from '../components/home/HeroSection.astro';
+import FeaturedProducts from '../components/home/FeaturedProducts.astro';
+import FeaturedCategories from '../components/home/FeaturedCategories.astro';
+import CustomerReviews from '../components/home/CustomerReviews.astro';
+import PromotionBanner from '../components/home/PromotionBanner.astro';
+
+const title = "BigS Store - Trang chủ";
 ---
 
-<Render title="Trang chủ" currentPage="home">
-  <Welcome />
-</Render>
+<Layout title={title} currentPage="home">
+  <div class="home-page">
+    <!-- Hero Section -->
+    <HeroSection />
+    
+    <!-- Featured Categories -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Danh mục nổi bật</h2>
+        <FeaturedCategories />
+      </div>
+    </section>
+    
+    <!-- Featured Products -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Sản phẩm nổi bật</h2>
+        <FeaturedProducts />
+      </div>
+    </section>
+    
+    <!-- Promotion Banner -->
+    <section class="section">
+      <div class="container">
+        <PromotionBanner />
+      </div>
+    </section>
+    
+    <!-- Customer Reviews -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Đánh giá từ khách hàng</h2>
+        <CustomerReviews />
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .home-page {
+    min-height: 100vh;
+  }
+  
+  .section {
+    padding: 60px 0;
+  }
+  
+  .section:nth-child(even) {
+    background: #f8fafc;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .section-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a202c;
+    text-align: center;
+    margin-bottom: 40px;
+    position: relative;
+  }
+  
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
+  }
+  
+  @media (max-width: 768px) {
+    .section {
+      padding: 40px 0;
+    }
+    
+    .section-title {
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+    
+    .container {
+      padding: 0 16px;
+    }
+  }
+</style> 

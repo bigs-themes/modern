@@ -5,6 +5,7 @@ import AnnouncementBar from '../components/AnnouncementBar.astro';
 import CartPopup from '../components/cart/CartPopup.astro';
 import VariantsPopup from '../components/cart/VariantsPopup.astro';
 import LivePreviewManager from '../components/LivePreviewManager.astro';
+import { shopStyleService } from '../services/ShopStyleService';
 import '../assets/css/card-styles.css';
 import '../assets/css/button-styles.css';
 
@@ -30,27 +31,29 @@ try {
   if (!shopId || shopId === 'localhost' || shopId === '127') {
     console.warn('No valid shop ID found in subdomain, skipping shop style config');
   } else {
-    // For now, use default config
-    shopStyleConfig = {
-      settings: {
-        fonts: {
-          heading: 'Inter',
-          body: 'Inter'
-        }
-      },
-      pageInterface: {
-        announcementBarSettings: {
-          visible: true,
-          content: '🔥 Khuyến mãi mùa hè: Giảm giá lên đến 50%',
-          textColor: '#ffffff',
-          backgroundColor: '#000000',
-          showOnHomepageOnly: false
-        }
-      }
-    };
+    // Use ShopStyleService to load config
+    shopStyleConfig = await shopStyleService.getShopStyleConfig(shopId);
   }
 } catch (error) {
   console.warn('Failed to load shop style config:', error);
+  // Fallback to default config
+  shopStyleConfig = {
+    settings: {
+      fonts: {
+        heading: 'Inter',
+        body: 'Inter'
+      }
+    },
+    pageInterface: {
+      announcementBarSettings: {
+        visible: true,
+        content: '🎉 Modern Theme v2.0 - Sidebar Navigation Layout!',
+        textColor: '#ffffff',
+        backgroundColor: '#667eea',
+        showOnHomepageOnly: false
+      }
+    }
+  };
 }
 ---
 
