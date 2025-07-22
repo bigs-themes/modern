@@ -1,28 +1,30 @@
 {
   "name": "Modern Theme",
-  "version": "1.0.0",
-  "description": "Modern e-commerce theme with horizontal navigation",
+  "version": "2.0.0",
+  "description": "Modern e-commerce theme with sidebar navigation",
   "author": "BigS Team",
   "repository": "https://github.com/bigs-themes/modern.git",
   "license": "MIT",
   "features": [
-    "horizontal-navigation",
+    "sidebar-navigation",
     "responsive-design",
-    "dark-mode-support",
+    "live-preview-support",
     "customizable-colors",
-    "seo-optimized"
+    "seo-optimized",
+    "mobile-friendly"
   ],
   "layouts": {
-    "main": "src/layouts/MainLayout.astro",
-    "product": "src/layouts/ProductLayout.astro",
-    "category": "src/layouts/CategoryLayout.astro"
+    "main": "src/layouts/Layout.astro",
+    "product": "src/layouts/Layout.astro",
+    "category": "src/layouts/Layout.astro"
   },
   "components": {
     "header": "src/components/Header.astro",
     "footer": "src/components/Footer.astro",
     "announcementBar": "src/components/AnnouncementBar.astro",
     "productCard": "src/components/ProductCard.astro",
-    "cartPopup": "src/components/CartPopup.astro"
+    "cartPopup": "src/components/CartPopup.astro",
+    "sidebar": "src/layouts/Layout.astro"
   },
   "assets": {
     "css": "src/assets/css/",
@@ -32,5 +34,13 @@
   "dependencies": {
     "tailwindcss": "^3.0.0",
     "@astrojs/tailwind": "^5.0.0"
+  },
+  "changelog": {
+    "2.0.0": [
+      "Added sidebar navigation layout",
+      "Improved mobile responsiveness",
+      "Enhanced live preview support",
+      "Updated color scheme and typography"
+    ]
   }
 } 
